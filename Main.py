@@ -1,4 +1,6 @@
 from tkinter import *
+
+from GraphService import GraphService
 from views.SimpleFormAdd import AddGraphSimpleFormViewCreator
 
 if __name__ == '__main__':
@@ -7,4 +9,3 @@ if __name__ == '__main__':
     AddGraphSimpleFormViewCreator(root)
 
     root.mainloop()
-
