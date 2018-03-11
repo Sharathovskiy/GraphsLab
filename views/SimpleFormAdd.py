@@ -29,6 +29,7 @@ class AddGraphSimpleFormViewCreator:
         self.current_nodes_info = Label(master)
 
         self.draw_graph_button = Button(master, text="Draw graph", command=self.draw_graph)
+        self.remove_graph_button = Button(master, text="Remove graph", command=self.remove_graph)
 
         # GRID
         self.add_node_label.grid(row=0, sticky=E)
@@ -52,10 +53,15 @@ class AddGraphSimpleFormViewCreator:
         self.current_nodes_info.grid(row=2, column=1, sticky=W)
         self.current_edges_info.grid(row=3, column=1, sticky=W)
 
-        self.draw_graph_button.grid(row=4, columnspan=4)
+        self.draw_graph_button.grid(row=4, columnspan=2)
+        self.remove_graph_button.grid(row=4, column=2, columnspan=2)
 
     def draw_graph(self):
         self.graphService.draw_graph()
+
+    def remove_graph(self):
+        self.graphService.remove_graph()
+        self.update_info()
 
     def add_node(self):
         node = self.add_node_entry.get()

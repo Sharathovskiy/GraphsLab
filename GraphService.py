@@ -21,3 +21,6 @@ class GraphService:
 
     def get_edges(self):
         return self.graph.edges
+
+    def remove_graph(self):
+        self.graph = nx.Graph()
