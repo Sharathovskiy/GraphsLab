@@ -1,13 +1,15 @@
 from tkinter import *
 from tkinter import messagebox
-import networkx as nx
-import matplotlib.pyplot as plt
 import numpy
+
+from GraphService import GraphService
 
 
 class AdjacencyMatrixGraph:
 
     def __init__(self, master):
+        self.graph_service = GraphService()
+
         # GUI ELEMENTS
         self.adjacency_matrix_entry = Entry(master)
         self.draw_graph_button = Button(master, text="Draw graph", command=self.draw_graph)
@@ -19,10 +21,6 @@ class AdjacencyMatrixGraph:
     def draw_graph(self):
         try:
             adjacency_matrix = numpy.matrix(self.adjacency_matrix_entry.get())
-            graph = nx.from_numpy_matrix(adjacency_matrix)
-            nx.draw(graph)
-            plt.show()
+            self.graph_service.draw_graph_from_adjacency_matrix(adjacency_matrix)
         except Exception as err:
-             messagebox.showerror('Exception', err)
-
-
+            messagebox.showerror('Exception', err)
