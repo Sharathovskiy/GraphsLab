@@ -23,8 +23,6 @@ class AdjacencyMatrixGraph:
             nx.draw(graph)
             plt.show()
         except Exception as err:
-            self.show_error(self, err)
+             messagebox.showerror('Exception', err)
 
 
-def show_error(self, *args):
-    messagebox.showerror('Exception', args[1])
