@@ -16,6 +16,11 @@ class GraphService:
         nx.draw(self.graph, with_labels=True)
         plt.show()
 
+    def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
+        self.graph = nx.from_numpy_matrix(adjacency_matrix)
+        nx.draw(self.graph, with_labels=True)
+        plt.show()
+
     def get_nodes(self):
         return self.graph.nodes
 
