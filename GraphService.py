@@ -30,6 +30,11 @@ class GraphService:
         plt.axis('off')
         plt.show()
 
+    def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
+        self.graph = nx.from_numpy_matrix(adjacency_matrix)
+        nx.draw(self.graph, with_labels=True)
+        plt.show()
+
     def split_edges_by_weights(self, chunks, weight_interval):
         split_edges = {}
         for i in range(chunks):
