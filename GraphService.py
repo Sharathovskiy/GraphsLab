@@ -85,7 +85,7 @@ class GraphService:
         return edge_labels
 
     def get_nodes(self):
-        return self.graph.nodes(data='weight', default='')
+        return self.graph.nodes()
 
     def get_edges(self, data=False):
         return self.graph.edges(data=data)
