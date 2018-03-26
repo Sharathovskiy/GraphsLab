@@ -18,17 +18,18 @@ class GraphService:
 
         nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
 
-        if self.are_all_weights_equal():
-            nx.draw_networkx_edges(self.graph, pos)
-        else: # Draw weights as edge labels and change edge width according to weight
-            edge_labels = self.get_edge_weights_dict()
-            split_edges = self.split_edges_by_weights(3, 5)
-
-            line_width = 2
-            for key, value in split_edges.items():
-                nx.draw_networkx_edges(self.graph, pos, edgelist=value, width=line_width)
-                line_width += 2
-            nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
+        nx.draw_networkx_edges(self.graph, pos)
+        # if self.are_all_weights_equal():
+        #     nx.draw_networkx_edges(self.graph, pos)
+        # else: # Draw weights as edge labels and change edge width according to weight
+        #     edge_labels = self.get_edge_weights_dict()
+        #     split_edges = self.split_edges_by_weights(3, 5)
+        #
+        #     line_width = 2
+        #     for key, value in split_edges.items():
+        #         nx.draw_networkx_edges(self.graph, pos, edgelist=value, width=line_width)
+        #         line_width += 2
+        #     nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
 
@@ -39,9 +40,8 @@ class GraphService:
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
         self.draw_graph()
 
-    def draw_graph_from_adjacency_list(self, adjacency_list, nodes_listbox, edges_listbox):
+    def draw_graph_from_adjacency_list(self, adjacency_list):
         self.graph = nx.parse_adjlist(adjacency_list, nodetype=int)
-        self.draw_graph(nodes_listbox, edges_listbox)
         self.draw_graph()
 
     def split_edges_by_weights(self, chunks, weight_interval):
