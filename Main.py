@@ -13,8 +13,8 @@ if __name__ == '__main__':
     frame1 = Frame(notebook)
     frame2 = Frame(notebook)
 
-    notebook.add(frame1, text='Frame One')
-    notebook.add(frame2, text='Frame Two')
+    notebook.add(frame1, text='Simple form')
+    notebook.add(frame2, text='Adjacency')
     notebook.pack()
 
     AddGraphSimpleFormViewCreator(frame1)
