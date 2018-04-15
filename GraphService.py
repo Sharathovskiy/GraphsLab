@@ -17,19 +17,11 @@ class GraphService:
         pos = nx.spring_layout(self.graph)
 
         nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
-
         nx.draw_networkx_edges(self.graph, pos)
-        # if self.are_all_weights_equal():
-        #     nx.draw_networkx_edges(self.graph, pos)
-        # else: # Draw weights as edge labels and change edge width according to weight
-        #     edge_labels = self.get_edge_weights_dict()
-        #     split_edges = self.split_edges_by_weights(3, 5)
-        #
-        #     line_width = 2
-        #     for key, value in split_edges.items():
-        #         nx.draw_networkx_edges(self.graph, pos, edgelist=value, width=line_width)
-        #         line_width += 2
-        #     nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
+
+        if not self.are_all_weights_equal():
+            edge_labels = self.get_edge_weights_dict()
+            nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
 
@@ -44,38 +36,18 @@ class GraphService:
         self.graph = nx.parse_adjlist(adjacency_list, nodetype=int)
         self.draw_graph()
 
-    def split_edges_by_weights(self, chunks, weight_interval):
-        split_edges = {}
-        for i in range(chunks):
-            split_edges[i] = []
-
-        for i in range(chunks):
-            for j, (u, v, d) in enumerate(self.get_edges(True)):
-                w = d['weight']
-
-                if w > chunks * weight_interval:
-                    split_edges[chunks-1].append((u, v))
-                    continue
-
-                if w < weight_interval:
-                    split_edges[0].append((u, v))
-                    continue
-
-                if w > i * weight_interval and w <= (i + 1) * weight_interval:
-                    split_edges[i].append((u, v))
-        return split_edges
-
     def are_all_weights_equal(self):
-        edges = list(self.get_edges())
-        if (len(edges) > 0):
+        edges = list(self.get_edges(True))
+        if len(edges) > 0:
             first_edge = edges[0]
-            u = first_edge[0]
-            v = first_edge[1]
-            comparing_edge_weight = self.graph[u][v]['weight']
-        for u, v in edges:
-            if self.graph[u][v]['weight'] != comparing_edge_weight:
+            comparing_edge_weight = first_edge[2]['weight']
+        else:
+            return False
+        for u, v, d in edges:
+            if d['weight'] != comparing_edge_weight:
                 return False
         return True
+
 
     def get_edge_weights_dict(self):
         edge_labels = {}
