@@ -37,30 +37,37 @@ class GraphService:
         self.draw_graph()
 
     def are_all_weights_equal(self):
+        if not self.do_edges_have_weight():
+            return True
         edges = list(self.get_edges(True))
         if len(edges) > 0:
-            first_edge = edges[0]
-            comparing_edge_weight = first_edge[2]['weight']
+            first_edge_data = edges[0][2]
+            comparing_edge_weight = first_edge_data['weight']
         else:
-            return False
+            return True
         for u, v, d in edges:
             if d['weight'] != comparing_edge_weight:
                 return False
         return True
 
+    def do_edges_have_weight(self):
+        for u, v, d in self.get_edges(True):
+            if 'weight' not in d:
+                return False
+        return True
 
     def get_edge_weights_dict(self):
         edge_labels = {}
-        for (u, v, d) in self.get_edges(True):
-            edge_labels[(u, v)] = d['weight']
-
+        if self.do_edges_have_weight():
+            for (u, v, d) in self.get_edges(True):
+                edge_labels[(u, v)] = d['weight']
         return edge_labels
 
     def get_nodes(self):
         return self.graph.nodes()
 
-    def get_edges(self, data=False):
-        return self.graph.edges(data=data)
+    def get_edges(self, with_data=False):
+        return self.graph.edges(data=with_data)
 
     def remove_graph(self):
         self.graph = nx.Graph()

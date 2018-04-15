@@ -1,6 +1,4 @@
 from tkinter import *
-from tkinter import messagebox
-import numpy
 
 from GraphService import GraphService
 
