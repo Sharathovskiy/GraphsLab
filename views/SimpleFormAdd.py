@@ -84,8 +84,11 @@ class AddGraphSimpleFormViewCreator:
         # TODO: handle indexes
         u = data[0]
         v = data[1]
-        # TODO: handle non numeric weight strings
-        weight = float(self.edge_weight.get())
+        try:
+            weight = float(self.edge_weight.get())
+        except ValueError:
+            weight = 1
+
         self.graphService.add_edge(u, v, weight=weight)
 
         self.erase_entry(self.add_edge_entry)
