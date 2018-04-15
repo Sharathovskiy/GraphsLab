@@ -1,7 +1,8 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 from tkinter import *
-
+from tkinter import messagebox
+import matplotlib.pyplot as plt
+import networkx as nx
+from matplotlib.widgets import Button
 
 class GraphService:
     def __init__(self, data=None):
@@ -33,7 +34,27 @@ class GraphService:
 
         nx.draw_networkx_labels(self.graph, pos)
 
-        plt.axis('off')
+        def euler(event):
+            # Jeżeli wszystkie wierzchołki grafu nieskierowanego mają stopień parzysty, to znaczy, że da się skonstruować zamkniętą ścieżkę Eulera nazywaną cyklem Eulera.
+            for v,d in self.graph.degree():
+                if d % 2 != 0:
+                    messagebox.showinfo("Euler", "false")
+                    return
+                messagebox.showinfo("Euler", "true")
+                return
+
+
+
+        def hamilton(event):
+                print(self.graph[1])
+
+        axEuler = plt.axes([0.0, 0.00, 0.1, 0.075])
+        axHamilton = plt.axes([0.2, 0.00, 0.1, 0.075])
+        beuler = Button(axEuler, 'Euler')
+        beuler.on_clicked(euler)
+        bhamilton = Button(axHamilton, 'Hamilton')
+        bhamilton.on_clicked(hamilton)
+
         plt.show()
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
