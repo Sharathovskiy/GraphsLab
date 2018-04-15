@@ -1,8 +1,6 @@
-from tkinter import *
-from tkinter import messagebox
 import matplotlib.pyplot as plt
 import networkx as nx
-from matplotlib.widgets import Button
+
 
 class GraphService:
     def __init__(self, data=None):
@@ -33,29 +31,37 @@ class GraphService:
         #     nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
-
-        def euler(event):
-            # Jeżeli wszystkie wierzchołki grafu nieskierowanego mają stopień parzysty, to znaczy, że da się skonstruować zamkniętą ścieżkę Eulera nazywaną cyklem Eulera.
-            for v,d in self.graph.degree():
-                if d % 2 != 0:
-                    messagebox.showinfo("Euler", "false")
-                    return
-                messagebox.showinfo("Euler", "true")
-                return
-
-
-
-        def hamilton(event):
-                print(self.graph[1])
-
-        axEuler = plt.axes([0.0, 0.00, 0.1, 0.075])
-        axHamilton = plt.axes([0.2, 0.00, 0.1, 0.075])
-        beuler = Button(axEuler, 'Euler')
-        beuler.on_clicked(euler)
-        bhamilton = Button(axHamilton, 'Hamilton')
-        bhamilton.on_clicked(hamilton)
-
+        plt.suptitle('Is an Euler\'s circuit.' if self.is_euler_circuit() else 'Is not an Euler\'s circuit.', fontsize=14, fontweight='bold')
         plt.show()
+
+
+
+    def hamilton(self):
+        G = self.graph
+        F = [(G,[G.nodes()[0]])]
+        n = G.number_of_nodes()
+        print(F)
+        while F:
+            graph,path = F.pop()
+            confs = []
+            for node in graph.neighbors(path[-1]):
+                conf_p = path[:]
+                conf_p.append(node)
+                conf_g = nx.Graph(graph)
+                conf_g.remove_node(path[-1])
+                confs.append((conf_g,conf_p))
+            for g,p in confs:
+                if len(p)==n:
+                    return p
+                else:
+                    F.append((g,p))
+        return None
+
+    def is_euler_circuit(self):
+        for v, d in self.graph.degree():
+            if d % 2 != 0:
+                return False
+        return True
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
@@ -106,7 +112,7 @@ class GraphService:
         return edge_labels
 
     def get_nodes(self):
-        return self.graph.nodes(data='weight', default='')
+        return self.graph.nodes()
 
     def get_edges(self, data=False):
         return self.graph.edges(data=data)
