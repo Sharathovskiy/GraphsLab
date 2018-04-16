@@ -19,8 +19,8 @@ class AdjacencyMatrixGraph:
         self.draw_graph_button.grid(row=1, column=1)
 
     def draw_graph(self):
-        try:
+        # try:
             adjacency_matrix = numpy.matrix(self.adjacency_matrix_entry.get())
             self.graph_service.draw_graph_from_adjacency_matrix(adjacency_matrix)
-        except Exception as err:
-            messagebox.showerror('Exception', err)
+        # except Exception as err:
+        #     messagebox.showerror('Exception', err)
