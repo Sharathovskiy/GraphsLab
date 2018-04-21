@@ -31,7 +31,8 @@ class GraphService:
         #     nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
-        plt.suptitle('Is an Euler\'s circuit.' if self.is_euler_circuit() else 'Is not an Euler\'s circuit.', fontsize=14, fontweight='bold')
+        plt.suptitle('Is an Euler\'s circuit.' if self.is_eulerian_circuit() else 'Is not an Euler\'s circuit.')
+        self.eulerian_circuit(0)
         plt.show()
 
 
@@ -57,11 +58,43 @@ class GraphService:
                     F.append((g,p))
         return None
 
-    def is_euler_circuit(self):
+    def is_eulerian_circuit(self):
         for v, d in self.graph.degree():
             if d % 2 != 0:
                 return False
         return True
+
+
+    # 0 1 0 0 0 1 0 1 1;
+    # 1 0 1 0 0 0 0 1 0;
+    # 0 1 0 1 0 0 0 0 0;
+    # 0 1 1 0 0 0 0 0 0;
+    # 0 0 0 0 0 0 1 1 0;
+    # 1 0 0 0 0 0 0 0 1;
+    # 0 0 0 0 1 0 1 0 0;
+    # 1 1 0 0 1 0 1 0 0;
+    # 1 0 0 0 0 1 0 0 0
+
+
+    def eulerian_circuit(self, start=0):
+        G = self.graph
+        degree = G.degree
+        edges = G.edges
+
+        vertex_stack = [start]
+        last_vertex = None
+        while vertex_stack:
+            current_vertex = vertex_stack[-1]
+            if degree(current_vertex) == 0:
+                if last_vertex is not None:
+                    print('(',last_vertex,'-', current_vertex, ')')
+                last_vertex = current_vertex
+                vertex_stack.pop()
+            else:
+                from networkx.utils import arbitrary_element
+                next_vertex = arbitrary_element(edges(current_vertex))[-1]
+                vertex_stack.append(next_vertex)
+                G.remove_edge(current_vertex, next_vertex)
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
