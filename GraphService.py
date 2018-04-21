@@ -1,3 +1,5 @@
+import copy
+
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -33,6 +35,7 @@ class GraphService:
         nx.draw_networkx_labels(self.graph, pos)
         plt.suptitle('Is an Euler\'s circuit.' if self.is_eulerian_circuit() else 'Is not an Euler\'s circuit.')
         self.eulerian_circuit(0)
+        print(self.dfs(0))
         plt.show()
 
 
@@ -74,10 +77,8 @@ class GraphService:
     # 0 0 0 0 1 0 1 0 0;
     # 1 1 0 0 1 0 1 0 0;
     # 1 0 0 0 0 1 0 0 0
-
-
     def eulerian_circuit(self, start=0):
-        G = self.graph
+        G = copy.deepcopy(self.graph)
         degree = G.degree
         edges = G.edges
 
@@ -95,6 +96,21 @@ class GraphService:
                 next_vertex = arbitrary_element(edges(current_vertex))[-1]
                 vertex_stack.append(next_vertex)
                 G.remove_edge(current_vertex, next_vertex)
+
+    # Example Adjacency List: 0 1 3; 1 2 4; 3 5 6; 5 7
+    def dfs(self, start):
+        G = self.graph.adj
+        stack, path = [start], []
+
+        while stack:
+            vertex = stack.pop()
+            if vertex in path:
+                continue
+            path.append(vertex)
+            for neighbor in G[vertex]:
+                stack.append(neighbor)
+
+        return path
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
