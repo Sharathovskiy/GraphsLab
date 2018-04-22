@@ -1,6 +1,7 @@
-import networkx as nx
+import copy
+
 import matplotlib.pyplot as plt
-from tkinter import *
+import networkx as nx
 
 
 class GraphService:
@@ -24,9 +25,84 @@ class GraphService:
             nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
-
-        plt.axis('off')
+        plt.suptitle('Is an Euler\'s circuit.' if self.is_eulerian_circuit() else 'Is not an Euler\'s circuit.')
+        self.eulerian_circuit(0)
+        print(self.dfs(0))
         plt.show()
+
+
+
+    def hamilton(self):
+        G = self.graph
+        F = [(G,[G.nodes()[0]])]
+        n = G.number_of_nodes()
+        print(F)
+        while F:
+            graph,path = F.pop()
+            confs = []
+            for node in graph.neighbors(path[-1]):
+                conf_p = path[:]
+                conf_p.append(node)
+                conf_g = nx.Graph(graph)
+                conf_g.remove_node(path[-1])
+                confs.append((conf_g,conf_p))
+            for g,p in confs:
+                if len(p)==n:
+                    return p
+                else:
+                    F.append((g,p))
+        return None
+
+    def is_eulerian_circuit(self):
+        for v, d in self.graph.degree():
+            if d % 2 != 0:
+                return False
+        return True
+
+
+    # 0 1 0 0 0 1 0 1 1;
+    # 1 0 1 0 0 0 0 1 0;
+    # 0 1 0 1 0 0 0 0 0;
+    # 0 1 1 0 0 0 0 0 0;
+    # 0 0 0 0 0 0 1 1 0;
+    # 1 0 0 0 0 0 0 0 1;
+    # 0 0 0 0 1 0 1 0 0;
+    # 1 1 0 0 1 0 1 0 0;
+    # 1 0 0 0 0 1 0 0 0
+    def eulerian_circuit(self, start=0):
+        G = copy.deepcopy(self.graph)
+        degree = G.degree
+        edges = G.edges
+
+        vertex_stack = [start]
+        last_vertex = None
+        while vertex_stack:
+            current_vertex = vertex_stack[-1]
+            if degree(current_vertex) == 0:
+                if last_vertex is not None:
+                    print('(',last_vertex,'-', current_vertex, ')')
+                last_vertex = current_vertex
+                vertex_stack.pop()
+            else:
+                from networkx.utils import arbitrary_element
+                next_vertex = arbitrary_element(edges(current_vertex))[-1]
+                vertex_stack.append(next_vertex)
+                G.remove_edge(current_vertex, next_vertex)
+
+    # Example Adjacency List: 0 1 3; 1 2 4; 3 5 6; 5 7
+    def dfs(self, start):
+        G = self.graph.adj
+        stack, path = [start], []
+
+        while stack:
+            vertex = stack.pop()
+            if vertex in path:
+                continue
+            path.append(vertex)
+            for neighbor in G[vertex]:
+                stack.append(neighbor)
+
+        return path
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
