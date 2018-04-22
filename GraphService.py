@@ -25,33 +25,14 @@ class GraphService:
             nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
-        plt.suptitle('Is an Euler\'s circuit.' if self.is_eulerian_circuit() else 'Is not an Euler\'s circuit.')
+
+        if self.is_eulerian_circuit():
+            plt.suptitle('Is an Euler\'s circuit.', color='green')
+        else:
+            plt.suptitle('Is not an Euler\'s circuit.', color='red')
+
         self.eulerian_circuit(0)
-        print(self.dfs(0))
         plt.show()
-
-
-
-    def hamilton(self):
-        G = self.graph
-        F = [(G,[G.nodes()[0]])]
-        n = G.number_of_nodes()
-        print(F)
-        while F:
-            graph,path = F.pop()
-            confs = []
-            for node in graph.neighbors(path[-1]):
-                conf_p = path[:]
-                conf_p.append(node)
-                conf_g = nx.Graph(graph)
-                conf_g.remove_node(path[-1])
-                confs.append((conf_g,conf_p))
-            for g,p in confs:
-                if len(p)==n:
-                    return p
-                else:
-                    F.append((g,p))
-        return None
 
     def is_eulerian_circuit(self):
         for v, d in self.graph.degree():
