@@ -2,11 +2,12 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from tkinter import *
 
+from Hamilton import Hamilton
+
 
 class GraphService:
     def __init__(self, data=None):
         self.graph = nx.Graph(data)
-        self.edges_visited= []
 
     def add_node(self, n, label=None):
         self.graph.add_node(n, label=label)
@@ -19,22 +20,24 @@ class GraphService:
 
         nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
 
-        self.hamilton()
+        hamilton = Hamilton(self)
+        is_hamilton = hamilton.check()
 
-        nx.draw_networkx_edges(self.graph, pos, edgelist=self.edges_visited, width=6)
+        if is_hamilton:
+            nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.edges_visited, width=6)
+            edge_labels = self.get_edge_dict_with_property('placement')
+            nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
+
         nx.draw_networkx_edges(self.graph, pos)
 
         if not self.are_all_weights_equal():
-            edge_labels = self.get_edge_weights_dict()
+            edge_labels = self.get_edge_dict_with_property('weight')
             nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_labels(self.graph, pos)
 
-
         plt.axis('off')
         plt.show()
-
-
 
     def draw_graph_from_adjacency_matrix(self, adjacency_matrix):
         self.graph = nx.from_numpy_matrix(adjacency_matrix)
@@ -58,32 +61,12 @@ class GraphService:
                 return False
         return True
 
-    def hamilton(self):
-        nodes = list(self.get_nodes(True))
-        self.check_nbrs(None, nodes[0])
-        print(nodes)
-        print(self.edges_visited)
-
     def get_node_with_value(self, value):
-        nodes = self.graph.nodes(data=True)
+        nodes = self.get_nodes(with_data=True)
         for node in list(nodes):
             if node[0] == value:
                 return node
         return None
-
-    def check_nbrs(self, parent_node, child_node):
-        child_node_data = child_node[1]
-        if 'visited' in child_node_data:
-            if child_node_data['visited'] is True:
-                return
-
-        child_node_data['visited'] = True
-        if parent_node is not None:
-            self.edges_visited.append((parent_node[0],child_node[0]))
-        for nbr in self.graph.neighbors(child_node[0]):
-            new_child = self.get_node_with_value(nbr)
-            self.check_nbrs(child_node, new_child)
-        return
 
     def do_edges_have_weight(self):
         for u, v, d in self.get_edges(True):
@@ -91,11 +74,11 @@ class GraphService:
                 return False
         return True
 
-    def get_edge_weights_dict(self):
+    def get_edge_dict_with_property(self, property):
         edge_labels = {}
-        if self.do_edges_have_weight():
-            for (u, v, d) in self.get_edges(True):
-                edge_labels[(u, v)] = d['weight']
+        for (u, v, d) in self.get_edges(True):
+            if property in d:
+                edge_labels[(u, v)] = d[property]
         return edge_labels
 
     def get_nodes(self, with_data = False):
@@ -106,7 +89,6 @@ class GraphService:
 
     def remove_graph(self):
         self.graph = nx.Graph()
-        self.edges_visited = []
 
     def get_node_label(self, n):
         return self.graph.node[n]['label']
