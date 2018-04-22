@@ -25,7 +25,7 @@ class GraphService:
         is_hamilton = hamilton.check()
 
         if is_hamilton:
-            nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.edges_visited, width=6)
+            nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.visited_edges, width=6)
             edge_labels = self.get_edge_dict_with_property('placement')
             nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
@@ -43,6 +43,7 @@ class GraphService:
             plt.suptitle('Is not an Euler\'s circuit.', color='red')
 
         self.eulerian_circuit(0)
+        plt.axis('off')
         plt.show()
 
     def is_eulerian_circuit(self):
