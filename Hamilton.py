@@ -42,14 +42,12 @@ class Hamilton:
             if self.is_node_visited(nbr):
                 continue
 
-            self.parent_nodes.append(child_node[0])
-
             new_child = self.graph_service.get_node_with_value(nbr)
             self.check_neighbours(child_node, new_child)
 
             # We want to check each path only once, so when it "comes back" after nested
             # neighbours are checked it means either that it found hamilton path or not.
-            if child_node[0] in self.parent_nodes:
+            if self.is_node_visited(child_node[0]):
                 return
         return
 

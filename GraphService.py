@@ -52,16 +52,6 @@ class GraphService:
                 return False
         return True
 
-
-    # 0 1 0 0 0 1 0 1 1;
-    # 1 0 1 0 0 0 0 1 0;
-    # 0 1 0 1 0 0 0 0 0;
-    # 0 1 1 0 0 0 0 0 0;
-    # 0 0 0 0 0 0 1 1 0;
-    # 1 0 0 0 0 0 0 0 1;
-    # 0 0 0 0 1 0 1 0 0;
-    # 1 1 0 0 1 0 1 0 0;
-    # 1 0 0 0 0 1 0 0 0
     def eulerian_circuit(self, start=0):
         G = copy.deepcopy(self.graph)
         degree = G.degree
