@@ -39,11 +39,15 @@ class Hamilton:
         child_node_data['visited'] = True
         if parent_node is not None:
             self.visited_edges.append((parent_node[0], child_node[0]))
+            print('adding path: ' + str((parent_node[0], child_node[0])) + 'for starting node: ' + str( self.current_starting_node[0]))
 
         starting_node_value = self.current_starting_node[0]
 
         neighbours = self.graph_service.graph.neighbors(child_node[0])
         for nbr in neighbours:
+            if self.hamilton_cycle_found:
+                return
+
             if parent_node is None:
                 self.make_all_nodes_unvisited()
                 child_node_data['visited'] = True
@@ -65,12 +69,11 @@ class Hamilton:
                     self.visited_edges.append((nbr, child_node[0]))
                     self.hamilton_cycle_found = True
                     return
-                else:
-                    continue
 
             if not self.hamilton_cycle_found:
                 self.unset_visited_edge(child_node[0], new_child[0])
                 self.make_node_unvisited(new_child)
+                print('unvisit: ' + str(new_child))
 
         return
 
