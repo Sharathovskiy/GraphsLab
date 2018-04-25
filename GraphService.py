@@ -22,9 +22,9 @@ class GraphService:
         nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
 
         hamilton = Hamilton(self)
-        is_hamilton = hamilton.check()
+        is_hamilton_cycle = hamilton.is_hamilton_cycle()
 
-        if is_hamilton:
+        if is_hamilton_cycle:
             nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.visited_edges, width=6)
             edge_labels = self.get_edge_dict_with_property('placement')
             nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
