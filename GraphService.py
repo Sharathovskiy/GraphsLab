@@ -1,14 +1,13 @@
-import copy
-
 import matplotlib.pyplot as plt
 import networkx as nx
 
+from Eulerian import Eulerian
 from Hamilton import Hamilton
 
 
 class GraphService:
-    def __init__(self, data=None):
-        self.graph = nx.Graph(data)
+    def __init__(self, graph = None):
+        self.graph = graph
 
     def add_node(self, n, label=None):
         self.graph.add_node(n, label=label)
@@ -37,45 +36,28 @@ class GraphService:
 
         nx.draw_networkx_labels(self.graph, pos)
 
-        if self.is_eulerian_circuit():
+        eulerian = Eulerian(self.graph)
+        if eulerian.is_eulerian_circuit():
             plt.suptitle('Is an Euler\'s circuit.', color='green')
         else:
             plt.suptitle('Is not an Euler\'s circuit.', color='red')
 
-        self.eulerian_circuit(0)
+        eulerian.eulerian_circuit(0)
+        print('Critical edges: ' + str(self.get_critical_edges()))
         plt.axis('off')
         plt.show()
 
-    def is_eulerian_circuit(self):
-        for v, d in self.graph.degree():
-            if d % 2 != 0:
-                return False
-        return True
-
-    def eulerian_circuit(self, start=0):
-        G = copy.deepcopy(self.graph)
-        degree = G.degree
-        edges = G.edges
-
-        vertex_stack = [start]
-        last_vertex = None
-        while vertex_stack:
-            current_vertex = vertex_stack[-1]
-            if degree(current_vertex) == 0:
-                if last_vertex is not None:
-                    print('(',last_vertex,'-', current_vertex, ')')
-                last_vertex = current_vertex
-                vertex_stack.pop()
-            else:
-                from networkx.utils import arbitrary_element
-                next_vertex = arbitrary_element(edges(current_vertex))[-1]
-                vertex_stack.append(next_vertex)
-                G.remove_edge(current_vertex, next_vertex)
-
     # Example Adjacency List: 0 1 3; 1 2 4; 3 5 6; 5 7
-    def dfs(self, start):
+    def get_dfs_path(self):
         G = self.graph.adj
-        stack, path = [start], []
+        nodes = list(self.graph.nodes())
+
+        if len(nodes) > 0:
+            starting_vertex = nodes[0]
+        else:
+            return
+
+        stack, path = [starting_vertex], []
 
         while stack:
             vertex = stack.pop()
@@ -94,6 +76,24 @@ class GraphService:
     def draw_graph_from_adjacency_list(self, adjacency_list):
         self.graph = nx.parse_adjlist(adjacency_list, nodetype=int)
         self.draw_graph()
+
+    def get_critical_edges(self):
+        edges = list(self.get_edges())
+        critical_edges = []
+        for edge in edges:
+            self.graph.remove_edge(*edge)
+            if not self.is_graph_connected():
+                critical_edges.append(edge)
+            self.graph.add_edge(*edge)
+        return critical_edges
+
+    def is_graph_connected(self):
+        dfs_path = self.get_dfs_path()
+        nodes = self.get_nodes()
+        for node in nodes:
+            if node not in dfs_path:
+                return False
+        return True
 
     def are_all_weights_equal(self):
         if not self.do_edges_have_weight():
