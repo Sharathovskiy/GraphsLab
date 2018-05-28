@@ -1,3 +1,6 @@
+import itertools
+import random
+
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -8,6 +11,7 @@ from Hamilton import Hamilton
 class GraphService:
     def __init__(self, graph = None):
         self.graph = graph
+        self.color_map = []
 
     def add_node(self, n, label=None):
         self.graph.add_node(n, label=label)
@@ -18,7 +22,10 @@ class GraphService:
     def draw_graph(self):
         pos = nx.spring_layout(self.graph)
 
-        nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
+        print(self.color_graph())
+        print(self.get_nodes(True))
+
+        nx.draw_networkx_nodes(self.graph, node_color= self.color_map, pos=pos, node_size=700)
 
         hamilton = Hamilton(self)
         is_hamilton_cycle = hamilton.is_hamilton_cycle()
@@ -37,6 +44,7 @@ class GraphService:
         nx.draw_networkx_labels(self.graph, pos)
 
         eulerian = Eulerian(self.graph)
+
         if eulerian.is_eulerian_circuit():
             plt.suptitle('Is an Euler\'s circuit.', color='green')
         else:
@@ -143,3 +151,33 @@ class GraphService:
 
     def get_edge_weight(self, u, v):
         return self.graph[u][v]['weight']
+
+    def color_graph(self):
+        self.color_map = []
+        colors = {}
+        #nodes = self.descent_colouring()
+        #nodes = self.random_colouring()
+        nodes = self.normal_colouring()
+        for u in nodes:
+            neighbour_colors = {colors[v] for v in self.graph[u] if v in colors}
+            dupa = ['blue','red','green','orange','yellow','purple']
+            for color in dupa:
+                if color not in neighbour_colors:
+                    break
+            colors[u] = color
+
+        for node in list(self.graph):
+            self.color_map.append(colors[node])
+
+        return colors
+
+    def descent_colouring(self):
+        return sorted(self.graph, key=self.graph.degree, reverse=True)
+
+    def random_colouring(self):
+        nodes = list(self.graph)
+        random.shuffle(nodes)
+        return nodes
+
+    def normal_colouring(self):
+        return list(self.graph)
