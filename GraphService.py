@@ -160,8 +160,8 @@ class GraphService:
         nodes = self.normal_colouring()
         for u in nodes:
             neighbour_colors = {colors[v] for v in self.graph[u] if v in colors}
-            dupa = ['blue','red','green','orange','yellow','purple']
-            for color in dupa:
+            node_colors = ['blue','red','green','orange','yellow','purple']
+            for color in node_colors:
                 if color not in neighbour_colors:
                     break
             colors[u] = color
