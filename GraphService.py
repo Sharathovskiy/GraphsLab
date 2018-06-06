@@ -6,6 +6,7 @@ import networkx as nx
 
 from Eulerian import Eulerian
 from Hamilton import Hamilton
+from PathFinder import PathFinder
 
 
 class GraphService:
@@ -22,18 +23,17 @@ class GraphService:
     def draw_graph(self):
         pos = nx.spring_layout(self.graph)
 
-        print(self.color_graph())
-        print(self.get_nodes(True))
+        # print(self.color_graph())
 
-        nx.draw_networkx_nodes(self.graph, node_color= self.color_map, pos=pos, node_size=700)
+        nx.draw_networkx_nodes(self.graph, pos=pos, node_size=700)
 
-        hamilton = Hamilton(self)
-        is_hamilton_cycle = hamilton.is_hamilton_cycle()
-
-        if is_hamilton_cycle:
-            nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.visited_edges, width=6)
-            edge_labels = self.get_edge_dict_with_property('placement')
-            nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
+        # hamilton = Hamilton(self)
+        # is_hamilton_cycle = hamilton.is_hamilton_cycle()
+        #
+        # if is_hamilton_cycle:
+        #     nx.draw_networkx_edges(self.graph, pos, edgelist=hamilton.visited_edges, width=6)
+        #     edge_labels = self.get_edge_dict_with_property('placement')
+        #     nx.draw_networkx_edge_labels(self.graph, pos=pos, edge_labels=edge_labels)
 
         nx.draw_networkx_edges(self.graph, pos)
 
@@ -43,15 +43,20 @@ class GraphService:
 
         nx.draw_networkx_labels(self.graph, pos)
 
-        eulerian = Eulerian(self.graph)
+        # eulerian = Eulerian(self.graph)
+        #
+        # if eulerian.is_eulerian_circuit():
+        #     plt.suptitle('Is an Euler\'s circuit.', color='green')
+        # else:
+        #     plt.suptitle('Is not an Euler\'s circuit.', color='red')
+        #
+        # eulerian.eulerian_circuit(0)
 
-        if eulerian.is_eulerian_circuit():
-            plt.suptitle('Is an Euler\'s circuit.', color='green')
-        else:
-            plt.suptitle('Is not an Euler\'s circuit.', color='red')
+        # print('Critical edges: ' + str(self.get_critical_edges()))
+        pathFinder = PathFinder(self, list(self.get_nodes())[0])
+        print(pathFinder.get_shortest_path_to_node(3))
+        print(pathFinder.paths)
 
-        eulerian.eulerian_circuit(0)
-        print('Critical edges: ' + str(self.get_critical_edges()))
         plt.axis('off')
         plt.show()
 
