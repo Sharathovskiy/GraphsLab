@@ -55,7 +55,7 @@ class GraphService:
         # print('Critical edges: ' + str(self.get_critical_edges()))
         pathFinder = PathFinder(self, list(self.get_nodes())[0])
         print(pathFinder.get_shortest_path_to_node(3))
-        print(pathFinder.paths)
+        # print(pathFinder.get_shortest_path_to_all_nodes_using_weights())
 
         plt.axis('off')
         plt.show()

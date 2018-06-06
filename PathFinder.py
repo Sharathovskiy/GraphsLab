@@ -4,7 +4,16 @@ class PathFinder:
         self.starting_node = starting_node
         self.current_path = []
         self.paths = []
+        self.shortest_paths_to_all_nodes = []
         print("starting node: " + str(starting_node))
+
+    def get_shortest_path_to_all_nodes_using_weights(self):
+        for node in self.graph_service.get_nodes():
+            shortest_path = self.get_shortest_path_to_node_using_weights(node)
+            if shortest_path is not None:
+                shortest_path.append(node)
+                self.shortest_paths_to_all_nodes.append(shortest_path)
+        return self.shortest_paths_to_all_nodes
 
     def get_shortest_path_to_node_using_weights(self, to_node):
         self.get_paths_to_node(to_node)
@@ -14,6 +23,7 @@ class PathFinder:
         for path in self.paths:
             if self.get_path_weight(shortest_path, to_node) > self.get_path_weight(path, to_node):
                 shortest_path = path
+        self.paths = []
         return shortest_path
 
     def get_path_weight(self, path, to_node):
